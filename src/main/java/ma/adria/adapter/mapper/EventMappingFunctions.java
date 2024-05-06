@@ -28,6 +28,9 @@ public class EventMappingFunctions {
             ObjectNode location = createLocationNode(eventRow, objectMapper);
             event.set("location", location);
 
+            ObjectNode contrat = createContratNode(eventRow, objectMapper);
+            event.set("contrat", contrat);
+
             ObjectNode device = createDeviceNode(eventRow, objectMapper);
             event.set("device", device);
 
@@ -58,6 +61,7 @@ public class EventMappingFunctions {
         event.put("username", getStringValue(eventRow, ACTOR_KEY));
         event.put("bankCode", getStringValue(eventRow, BANK_CODE_KEY));
         event.put("countryCode", getStringValue(eventRow, COUNTRY_CODE_KEY));
+        event.set("segment", null); // not provided in event logs table
         return event;
     }
 
@@ -67,6 +71,13 @@ public class EventMappingFunctions {
         location.put("ipAddress2", getStringValue(eventRow, IP_ADDRESS_2_KEY));
         location.set("geoLocation", null); // not provided from audit db
         return location;
+    }
+
+    private static ObjectNode createContratNode(Map<String, Object> eventRow, ObjectMapper objectMapper) {
+        ObjectNode contrat = objectMapper.createObjectNode();
+        contrat.put("contratID", getStringValue(eventRow, CONTRAT_ID_KEY));
+
+        return contrat;
     }
 
     private static ObjectNode createDeviceNode(Map<String, Object> eventRow, ObjectMapper objectMapper) {
@@ -89,6 +100,10 @@ public class EventMappingFunctions {
             ObjectNode event = createEventNode(eventRow, objectMapper);
             ObjectNode location = createLocationNode(eventRow, objectMapper);
             event.set("location", location);
+
+            ObjectNode contrat = createContratNode(eventRow, objectMapper);
+            event.set("contrat", contrat);
+
             event.set("device", null); // No device information for remise ordre
 
             // Additional remise ordre specific fields
@@ -110,6 +125,10 @@ public class EventMappingFunctions {
             ObjectNode event = createEventNode(eventRow, objectMapper);
             ObjectNode location = createLocationNode(eventRow, objectMapper);
             event.set("location", location);
+
+            ObjectNode contrat = createContratNode(eventRow, objectMapper);
+            event.set("contrat", contrat);
+
             event.set("device", null); // No device information for remise ordre
 
             // Additional remise ordre specific fields
@@ -130,6 +149,10 @@ public class EventMappingFunctions {
             ObjectNode event = createEventNode(eventRow, objectMapper);
             ObjectNode location = createLocationNode(eventRow, objectMapper);
             event.set("location", location);
+
+            ObjectNode contrat = createContratNode(eventRow, objectMapper);
+            event.set("contrat", contrat);
+
             event.set("device", null); // No device information for remise ordre
 
             // Additional remise ordre specific fields
@@ -150,6 +173,10 @@ public class EventMappingFunctions {
             ObjectNode event = createEventNode(eventRow, objectMapper);
             ObjectNode location = createLocationNode(eventRow, objectMapper);
             event.set("location", location);
+
+            ObjectNode contrat = createContratNode(eventRow, objectMapper);
+            event.set("contrat", contrat);
+
             event.set("device", null); // No device information for remise ordre
 
             // Additional remise ordre specific fields
@@ -170,6 +197,10 @@ public class EventMappingFunctions {
             ObjectNode event = createEventNode(eventRow, objectMapper);
             ObjectNode location = createLocationNode(eventRow, objectMapper);
             event.set("location", location);
+
+            ObjectNode contrat = createContratNode(eventRow, objectMapper);
+            event.set("contrat", contrat);
+
             event.set("device", null); // No device information for remise ordre
 
             // Additional remise ordre specific fields
@@ -190,9 +221,13 @@ public class EventMappingFunctions {
             ObjectNode event = createEventNode(eventRow, objectMapper);
             ObjectNode location = createLocationNode(eventRow, objectMapper);
             event.set("location", location);
+
+            ObjectNode contrat = createContratNode(eventRow, objectMapper);
+            event.set("contrat", contrat);
+
             event.set("device", null); // No device information for remise ordre
 
-            // Additional remise ordre specific fields
+            // Additional virement compte a compte multi devise specific fields
 
             // ....
 
@@ -212,6 +247,10 @@ public class EventMappingFunctions {
 
             ObjectNode location = createLocationNode(eventRow, objectMapper);
             event.set("location", location);
+
+            ObjectNode contrat = createContratNode(eventRow, objectMapper);
+            event.set("contrat", contrat);
+
             event.set("device", null); // No device information for remise ordre
 
             // Additional remise ordre specific fields
