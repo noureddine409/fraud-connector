@@ -11,8 +11,8 @@ import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import ma.adria.adapter.dto.DebeziumEvent;
 import ma.adria.adapter.producer.KafkaProducer;
-import ma.adria.adapter.utils.EventClassification;
-import ma.adria.adapter.utils.EventClassifier;
+import ma.adria.adapter.classification.EventClassification;
+import ma.adria.adapter.classification.EventClassifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

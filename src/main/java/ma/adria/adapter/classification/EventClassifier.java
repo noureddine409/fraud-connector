@@ -1,11 +1,11 @@
-package ma.adria.adapter.utils;
+package ma.adria.adapter.classification;
 
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static ma.adria.adapter.utils.EventClassification.*;
+import static ma.adria.adapter.classification.EventClassification.*;
 
 
 @Component
