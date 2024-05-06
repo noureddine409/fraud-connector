@@ -1,13 +1,12 @@
-package ma.adria.adapter.utils;
+package ma.adria.adapter.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import eu.bitwalker.useragentutils.Browser;
-import eu.bitwalker.useragentutils.OperatingSystem;
-import eu.bitwalker.useragentutils.UserAgent;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import ma.adria.adapter.classification.EventClassification;
+import ma.adria.adapter.utils.UserAgentUtils;
 
 import java.util.Map;
 
@@ -49,7 +48,7 @@ public class EventMappingFunctions {
             ObjectNode device = objectMapper.createObjectNode();
             device.put("macAddress", getStringValue(eventRow, "mac_adress"));
             device.put("deviceId", getStringValue(eventRow, "ref1"));
-            populateDeviceInfo(device, getStringValue(eventRow, "ref1"));
+            UserAgentUtils.populateDeviceInfo(device, getStringValue(eventRow, "ref1"));
             event.set("device", device);
 
             return objectMapper.writeValueAsString(event);
@@ -67,30 +66,6 @@ public class EventMappingFunctions {
     private String getCanalValue(Map<String, Object> eventRow) {
         String plateforme = getStringValue(eventRow, "plateforme");
         return (plateforme != null && plateforme.equalsIgnoreCase("web")) ? "WEB" : "MOBILE";
-    }
-
-    private void populateDeviceInfo(ObjectNode device, String userAgentString) {
-        if (userAgentString != null) {
-            try {
-                UserAgent userAgent = UserAgent.parseUserAgentString(userAgentString);
-
-                // Extract device type based on operating system
-                device.put("deviceType", userAgent.getOperatingSystem().getDeviceType().getName());
-
-                // Extract browser information
-                Browser browser = userAgent.getBrowser();
-                device.put("browser", browser.getName());
-                device.put("browserVersion", userAgent.getBrowserVersion().getVersion());
-
-                // Extract operating system information
-                OperatingSystem os = userAgent.getOperatingSystem();
-                device.put("os", os.getName());
-                device.put("manufacturer", os.getManufacturer().getName());
-                device.put("model", os.getDeviceType().getName());
-            } catch (Exception e) {
-                log.error("Error parsing user agent string: {}", e.getMessage());
-            }
-        }
     }
 
     public static String mapVirementCompteACompte(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {

@@ -1,10 +1,12 @@
-package ma.adria.adapter.utils;
+package ma.adria.adapter.classification;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ma.adria.adapter.common.CoreConstant.Topics;
+import ma.adria.adapter.mapper.EventMappingFunctions;
+import ma.adria.adapter.utils.TriFunction;
 
 import java.util.Map;
 
