@@ -40,21 +40,21 @@ Configures Kafka connection details such as bootstrap servers and topic settings
 ### Installation
 
 1. Clone the repository:
-  ```bash
+```bash
   git clone https://noureddinelachgar@bitbucket.org/adria-fraud-detection/adapter.git
-  ```
+```
 2. run docker compose file
 ```bash
   docker compose up -d
-  ```
+```
 3. Build the project:
-  ```bash
+```bash
   mvn clean install
-  ```
+```
 4. Run the application:
-  ```bash
+```bash
   mvn spring-boot:run
-  ```
+```
 ### Usage
 
 1. execute sql query on table event_logs 
