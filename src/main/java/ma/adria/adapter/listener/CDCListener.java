@@ -10,6 +10,9 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import ma.adria.adapter.dto.DebeziumEvent;
+import ma.adria.adapter.producer.KafkaProducer;
+import ma.adria.adapter.utils.EventClassification;
+import ma.adria.adapter.utils.EventClassifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,9 +28,13 @@ public class CDCListener {
     private final Executor executor;
     private final DebeziumEngine<ChangeEvent<String, String>> debeziumEngine;
     private final ObjectMapper objectMapper;
+    private final EventClassifier eventClassifier;
+    private final KafkaProducer kafkaProducer;
 
-    public CDCListener(Configuration postgresConnector, ObjectMapper objectMapper) {
+    public CDCListener(Configuration postgresConnector, ObjectMapper objectMapper, EventClassifier eventClassifier, KafkaProducer kafkaProducer) {
         this.objectMapper = objectMapper;
+        this.eventClassifier = eventClassifier;
+        this.kafkaProducer = kafkaProducer;
         this.executor = Executors.newSingleThreadExecutor();
 
         // Create a new DebeziumEngine instance.
@@ -45,6 +52,11 @@ public class CDCListener {
             if (CREATE.equals(debeziumEvent.getPayload().getOperationType())) {
                 final Map<String, Object> eventRow = debeziumEvent.getPayload().getAfter();
                 log.info("new inserted row {}", eventRow);
+                EventClassification eventClassification = eventClassifier.classify(eventRow);
+                log.info("event classification {}", eventClassification);
+                final String eventAsMessage = eventClassification.getMapProcessingFunction().apply(eventRow, eventClassification, objectMapper);
+                log.info("event as message {}", eventAsMessage);
+                kafkaProducer.sendEvent(eventAsMessage);
             }
         } catch (JsonProcessingException e) {
             log.error("failed to deserialize change event", e);
