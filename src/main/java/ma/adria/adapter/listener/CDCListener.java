@@ -54,7 +54,7 @@ public class CDCListener {
                 log.info("new inserted row {}", eventRow);
                 EventClassification eventClassification = eventClassifier.classify(eventRow);
                 log.info("event classification {}", eventClassification);
-                final String eventAsMessage = eventClassification.getMapProcessingFunction().apply(eventRow, eventClassification, objectMapper);
+                final String eventAsMessage = eventClassification.getMapProcessingFunction().map(eventRow, eventClassification, objectMapper);
                 log.info("event as message {}", eventAsMessage);
                 kafkaProducer.sendEvent(eventAsMessage, eventClassification.getTopicId());
             }

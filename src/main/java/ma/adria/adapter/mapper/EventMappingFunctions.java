@@ -10,45 +10,25 @@ import ma.adria.adapter.utils.UserAgentUtils;
 
 import java.util.Map;
 
+import static ma.adria.adapter.common.CoreConstant.EventLogsRows.*;
+
 @UtilityClass
 @Slf4j
 public class EventMappingFunctions {
 
 
     public static String mapAuthentication(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
-        if (eventRow == null || classification == null || objectMapper == null) {
-            log.error("Invalid input parameters for mapAuthentication");
-            throw new IllegalArgumentException("Invalid input parameters for mapAuthentication");
-        }
+        assertParametersNotNull(eventRow, classification, objectMapper);
+
 
         try {
             // Create the root event object
-            ObjectNode event = objectMapper.createObjectNode();
+            ObjectNode event = createEventNode(eventRow, objectMapper);
 
-            // Populate event properties
-            event.put("id", getStringValue(eventRow, "id"));
-            event.put("timestamp", getStringValue(eventRow, "datecreated"));
-            event.put("motif", getStringValue(eventRow, "motif"));
-            event.put("canal", getCanalValue(eventRow));
-            event.put("activityTime", getStringValue(eventRow, "activitytime"));
-            event.put("username", getStringValue(eventRow, "actor"));
-
-            // Construct location object
-            ObjectNode location = objectMapper.createObjectNode();
-            location.put("ipAddress", getStringValue(eventRow, "ipaddress"));
-            location.put("ipAddress2", getStringValue(eventRow, "ipaddress2"));
+            ObjectNode location = createLocationNode(eventRow, objectMapper);
             event.set("location", location);
 
-            // Construct contrat object
-            ObjectNode contrat = objectMapper.createObjectNode();
-            contrat.put("contratID", getStringValue(eventRow, "contrat_id"));
-            event.set("contrat", contrat);
-
-            // Construct device info
-            ObjectNode device = objectMapper.createObjectNode();
-            device.put("macAddress", getStringValue(eventRow, "mac_adress"));
-            device.put("deviceId", getStringValue(eventRow, "ref1"));
-            UserAgentUtils.populateDeviceInfo(device, getStringValue(eventRow, "ref1"));
+            ObjectNode device = createDeviceNode(eventRow, objectMapper);
             event.set("device", device);
 
             return objectMapper.writeValueAsString(event);
@@ -64,40 +44,191 @@ public class EventMappingFunctions {
     }
 
     private String getCanalValue(Map<String, Object> eventRow) {
-        String plateforme = getStringValue(eventRow, "plateforme");
+        String plateforme = getStringValue(eventRow, PLATEFORME_KEY);
         return (plateforme != null && plateforme.equalsIgnoreCase("web")) ? "WEB" : "MOBILE";
     }
 
-    public static String mapVirementCompteACompte(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
-        return mapEvent(eventRow, classification, objectMapper);
+    private static ObjectNode createEventNode(Map<String, Object> eventRow, ObjectMapper objectMapper) {
+        ObjectNode event = objectMapper.createObjectNode();
+        event.put("id", getStringValue(eventRow, ID_KEY));
+        event.put("timestamp", getStringValue(eventRow, TIMESTAMP_KEY));
+        event.put("motif", getStringValue(eventRow, MOTIF_KEY));
+        event.put("canal", getCanalValue(eventRow));
+        event.put("activityTime", getStringValue(eventRow, ACTIVITY_TIME_KEY));
+        event.put("username", getStringValue(eventRow, ACTOR_KEY));
+        event.put("bankCode", getStringValue(eventRow, BANK_CODE_KEY));
+        event.put("countryCode", getStringValue(eventRow, COUNTRY_CODE_KEY));
+        return event;
     }
 
-    private static String mapEvent(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
-        return null;
+    private static ObjectNode createLocationNode(Map<String, Object> eventRow, ObjectMapper objectMapper) {
+        ObjectNode location = objectMapper.createObjectNode();
+        location.put("ipAddress", getStringValue(eventRow, IP_ADDRESS_KEY));
+        location.put("ipAddress2", getStringValue(eventRow, IP_ADDRESS_2_KEY));
+        location.set("geoLocation", null); // not provided from audit db
+        return location;
     }
+
+    private static ObjectNode createDeviceNode(Map<String, Object> eventRow, ObjectMapper objectMapper) {
+        ObjectNode device = objectMapper.createObjectNode();
+        device.put("macAddress", getStringValue(eventRow, MAC_ADDRESS_KEY));
+        device.put("deviceId", getStringValue(eventRow, REF1_KEY));
+        UserAgentUtils.populateDeviceInfo(device, getStringValue(eventRow, REF1_KEY));
+        return device;
+    }
+
+    private static void assertParametersNotNull(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+        if (eventRow == null || classification == null || objectMapper == null) {
+            throw new IllegalArgumentException("Invalid input parameters for event mapping");
+        }
+    }
+
+    public static String mapVirementCompteACompte(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = createEventNode(eventRow, objectMapper);
+            ObjectNode location = createLocationNode(eventRow, objectMapper);
+            event.set("location", location);
+            event.set("device", null); // No device information for remise ordre
+
+            // Additional remise ordre specific fields
+
+            // ....
+
+            return objectMapper.writeValueAsString(event);
+
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for Virement Compte a compte event: {}", e.getMessage());
+            return null;
+        }
+    }
+
 
     public static String mapVirementVersBeneficiaire(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
-        return mapEvent(eventRow, classification, objectMapper);
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = createEventNode(eventRow, objectMapper);
+            ObjectNode location = createLocationNode(eventRow, objectMapper);
+            event.set("location", location);
+            event.set("device", null); // No device information for remise ordre
+
+            // Additional remise ordre specific fields
+
+            // ....
+
+            return objectMapper.writeValueAsString(event);
+
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for Virement vers beneficiare event: {}", e.getMessage());
+            return null;
+        }
     }
 
     public static String mapVirementPermanent(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
-        return mapEvent(eventRow, classification, objectMapper);
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = createEventNode(eventRow, objectMapper);
+            ObjectNode location = createLocationNode(eventRow, objectMapper);
+            event.set("location", location);
+            event.set("device", null); // No device information for remise ordre
+
+            // Additional remise ordre specific fields
+
+            // ....
+
+            return objectMapper.writeValueAsString(event);
+
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for Virement permanent event: {}", e.getMessage());
+            return null;
+        }
     }
 
     public static String mapVirementMultiple(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
-        return mapEvent(eventRow, classification, objectMapper);
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = createEventNode(eventRow, objectMapper);
+            ObjectNode location = createLocationNode(eventRow, objectMapper);
+            event.set("location", location);
+            event.set("device", null); // No device information for remise ordre
+
+            // Additional remise ordre specific fields
+
+            // ....
+
+            return objectMapper.writeValueAsString(event);
+
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for Virement multiple event: {}", e.getMessage());
+            return null;
+        }
     }
 
-    public static String mapVirementCompteAComptePermanent(Map<String, Object> dataMap, EventClassification classification, ObjectMapper objectMapper) {
-        return mapEvent(dataMap, classification, objectMapper);
+    public static String mapVirementCompteAComptePermanent(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = createEventNode(eventRow, objectMapper);
+            ObjectNode location = createLocationNode(eventRow, objectMapper);
+            event.set("location", location);
+            event.set("device", null); // No device information for remise ordre
+
+            // Additional remise ordre specific fields
+
+            // ....
+
+            return objectMapper.writeValueAsString(event);
+
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for Virement Compte a compte permanent event: {}", e.getMessage());
+            return null;
+        }
     }
 
-    public static String mapVirementCompteACompteMultiDevise(Map<String, Object> dataMap, EventClassification classification, ObjectMapper objectMapper) {
-        return mapEvent(dataMap, classification, objectMapper);
+    public static String mapVirementCompteACompteMultiDevise(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = createEventNode(eventRow, objectMapper);
+            ObjectNode location = createLocationNode(eventRow, objectMapper);
+            event.set("location", location);
+            event.set("device", null); // No device information for remise ordre
+
+            // Additional remise ordre specific fields
+
+            // ....
+
+            return objectMapper.writeValueAsString(event);
+
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for Virement Compte a compte multi devise event: {}", e.getMessage());
+            return null;
+        }
     }
 
-    public static String mapRemiseOrdre(Map<String, Object> dataMap, EventClassification classification, ObjectMapper objectMapper) {
-        return mapEvent(dataMap, classification, objectMapper);
+    public static String mapRemiseOrdre(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+        assertParametersNotNull(eventRow, classification, objectMapper);
+
+        try {
+            ObjectNode event = createEventNode(eventRow, objectMapper);
+
+            ObjectNode location = createLocationNode(eventRow, objectMapper);
+            event.set("location", location);
+            event.set("device", null); // No device information for remise ordre
+
+            // Additional remise ordre specific fields
+            event.set("reference", null);
+            event.set("natureRemise", null);
+            event.set("format", null);
+            event.set("donneurOrdre", null);
+            event.set("compteDebit", null);
+            event.set("file", null);
+            event.set("executionDate", null);
+            event.set("status", null);
+
+            return objectMapper.writeValueAsString(event);
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for Remise Ordre event: {}", e.getMessage());
+            return null;
+        }
     }
 
 
