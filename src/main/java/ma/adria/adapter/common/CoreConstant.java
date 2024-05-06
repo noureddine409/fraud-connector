@@ -16,4 +16,21 @@ public class CoreConstant {
         public static final String VIREMENT_COMPTE_A_COMPTE_MULTI_DEVISE = "virCACMultiDevise";
         public static final String REMISE_ORDRE = "remise-ordre";
     }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class EventLogsRows {
+        public static final String ID_KEY = "id";
+        public static final String TIMESTAMP_KEY = "datecreated";
+        public static final String MOTIF_KEY = "motif";
+        public static final String ACTIVITY_TIME_KEY = "activitytime";
+        public static final String ACTOR_KEY = "actor";
+        public static final String IP_ADDRESS_KEY = "ipaddress";
+        public static final String IP_ADDRESS_2_KEY = "ipaddress2";
+        public static final String BANK_CODE_KEY = "codebanqueassocie";
+        public static final String COUNTRY_CODE_KEY = "codepaysassocie";
+        public static final String CONTRAT_ID_KEY = "contrat_id";
+        public static final String PLATEFORME_KEY = "plateforme";
+        public static final String MAC_ADDRESS_KEY = "mac_address";
+        public static final String REF1_KEY = "ref1";
+    }
 }

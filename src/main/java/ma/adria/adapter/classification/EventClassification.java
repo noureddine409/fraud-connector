@@ -1,14 +1,11 @@
 package ma.adria.adapter.classification;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ma.adria.adapter.common.CoreConstant.Topics;
 import ma.adria.adapter.mapper.EventMappingFunctions;
-import ma.adria.adapter.utils.TriFunction;
-
-import java.util.Map;
+import ma.adria.adapter.mapper.EventMapper;
 
 @Getter
 @AllArgsConstructor
@@ -23,7 +20,7 @@ public enum EventClassification {
     REMISE_ORDRE(EventMappingFunctions::mapRemiseOrdre, Topics.REMISE_ORDRE),
     NON_APPLICABLE(null, null);
 
-    private final TriFunction<Map<String, Object>, EventClassification, ObjectMapper, String> mapProcessingFunction;
+    private final EventMapper mapProcessingFunction;
     private final String topicId;
 
 }
