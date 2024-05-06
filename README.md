@@ -114,4 +114,4 @@ VALUES (
     NULL
 );
 ```
-2. you can visualize the new event in kafka broker via kafdrop ui http:localhost:9000/
+2. you can visualize the new event in kafka broker via kafdrop ui http://localhost:9000/
