@@ -11,6 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 @UtilityClass
 @Slf4j
 public class UserAgentUtils {
+
+    public static String generateDeviceFingerprint(String username, String userAgent) {
+        final String combinedInfo = username + userAgent;
+        return HashUtils.hashWithSHA256(combinedInfo);
+    }
+
     public void populateDeviceInfo(ObjectNode device, String userAgentString) {
         if (userAgentString != null) {
             try {

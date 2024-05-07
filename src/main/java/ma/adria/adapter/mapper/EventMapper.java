@@ -18,5 +18,5 @@ public interface EventMapper {
      * @param objectMapper   ObjectMapper instance to serialize the event data.
      * @return JSON string representing the mapped event.
      */
-    String map(Map<String, Object> row, EventClassification classification, ObjectMapper objectMapper);
+    String map(final Map<String, Object> row, final EventClassification classification, final ObjectMapper objectMapper);
 }

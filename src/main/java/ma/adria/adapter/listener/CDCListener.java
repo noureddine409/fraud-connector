@@ -61,8 +61,12 @@ public class CDCListener {
             if (CREATE.equals(debeziumEvent.getPayload().getOperationType())) {
                 final Map<String, Object> eventRow = debeziumEvent.getPayload().getAfter();
                 log.info("new inserted row {}", eventRow);
-                EventClassification eventClassification = eventClassifier.classify(eventRow);
+                final EventClassification eventClassification = eventClassifier.classify(eventRow);
                 log.info("event classification {}", eventClassification);
+                if (EventClassification.NON_APPLICABLE.equals(eventClassification)) {
+                    log.info("ignoring non-applicable event classification {}", eventClassification);
+                    return;
+                }
                 final String eventAsMessage = eventClassification.getMapProcessingFunction().map(eventRow, eventClassification, objectMapper);
                 log.info("event as message {}", eventAsMessage);
                 kafkaProducer.sendEvent(eventAsMessage, eventClassification.getTopicId());

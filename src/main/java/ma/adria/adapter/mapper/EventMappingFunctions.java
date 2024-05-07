@@ -9,6 +9,7 @@ import ma.adria.adapter.classification.EventClassification;
 import ma.adria.adapter.utils.UserAgentUtils;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static ma.adria.adapter.common.CoreConstant.EventLogsRows.*;
 
@@ -19,7 +20,7 @@ import static ma.adria.adapter.common.CoreConstant.EventLogsRows.*;
 @Slf4j
 public class EventMappingFunctions {
 
-    public static String mapAuthentication(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+    public static String mapAuthentication(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
             ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
@@ -32,7 +33,7 @@ public class EventMappingFunctions {
         }
     }
 
-    public static String mapVirementCompteACompte(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+    public static String mapVirementCompteACompte(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
             ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
@@ -50,7 +51,7 @@ public class EventMappingFunctions {
     }
 
 
-    public static String mapVirementVersBeneficiaire(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+    public static String mapVirementVersBeneficiaire(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
             ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
@@ -68,7 +69,7 @@ public class EventMappingFunctions {
         }
     }
 
-    private static void mapVirementSharedAttributes(ObjectNode event) {
+    private static void mapVirementSharedAttributes(final ObjectNode event) {
         event.set("creditor", null);
         event.set("debitingAccount", null);
         event.set("type", null);
@@ -79,12 +80,13 @@ public class EventMappingFunctions {
         event.set("executionFrequency", null);
     }
 
-    public static String mapVirementPermanent(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+    public static String mapVirementPermanent(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
             ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
+            mapVirementSharedAttributes(event);
 
             // Additional virement permanent specific fields
 
@@ -98,7 +100,7 @@ public class EventMappingFunctions {
         }
     }
 
-    public static String mapVirementMultiple(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+    public static String mapVirementMultiple(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
             ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
@@ -121,12 +123,13 @@ public class EventMappingFunctions {
         }
     }
 
-    public static String mapVirementCompteAComptePermanent(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+    public static String mapVirementCompteAComptePermanent(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
             ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
+            mapVirementSharedAttributes(event);
 
             // Additional remise ordre specific fields
 
@@ -140,12 +143,13 @@ public class EventMappingFunctions {
         }
     }
 
-    public static String mapVirementCompteACompteMultiDevise(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+    public static String mapVirementCompteACompteMultiDevise(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
             ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
+            mapVirementSharedAttributes(event);
 
             // Additional virement compte a compte multi devise specific fields
 
@@ -159,7 +163,7 @@ public class EventMappingFunctions {
         }
     }
 
-    public static String mapRemiseOrdre(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+    public static String mapRemiseOrdre(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
 
         try {
@@ -185,7 +189,7 @@ public class EventMappingFunctions {
     }
 
 
-    private static ObjectNode mapSharedAttributes(Map<String, Object> eventRow, ObjectMapper objectMapper) {
+    private static ObjectNode mapSharedAttributes(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
         ObjectNode event = createEventNode(eventRow, objectMapper);
         ObjectNode location = createLocationNode(eventRow, objectMapper);
         event.set("location", location);
@@ -195,7 +199,7 @@ public class EventMappingFunctions {
         return event;
     }
 
-    private static ObjectNode createEventNode(Map<String, Object> eventRow, ObjectMapper objectMapper) {
+    private static ObjectNode createEventNode(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
         ObjectNode event = objectMapper.createObjectNode();
         event.put("id", getStringValue(eventRow, ID_KEY));
         event.put("timestamp", getStringValue(eventRow, TIMESTAMP_KEY));
@@ -209,7 +213,7 @@ public class EventMappingFunctions {
         return event;
     }
 
-    private static ObjectNode createLocationNode(Map<String, Object> eventRow, ObjectMapper objectMapper) {
+    private static ObjectNode createLocationNode(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
         ObjectNode location = objectMapper.createObjectNode();
         location.put("ipAddress", getStringValue(eventRow, IP_ADDRESS_KEY));
         location.put("ipAddress2", getStringValue(eventRow, IP_ADDRESS_2_KEY));
@@ -217,34 +221,124 @@ public class EventMappingFunctions {
         return location;
     }
 
-    private static ObjectNode createContratNode(Map<String, Object> eventRow, ObjectMapper objectMapper) {
+    private static ObjectNode createContratNode(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
         ObjectNode contrat = objectMapper.createObjectNode();
         contrat.put("contratID", getStringValue(eventRow, CONTRAT_ID_KEY));
 
         return contrat;
     }
 
-    private static ObjectNode createDeviceNode(Map<String, Object> eventRow, ObjectMapper objectMapper) {
+    private static ObjectNode createDeviceNode(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
+        final String userAgent = getStringValue(eventRow, REF1_KEY);
+        if (Objects.isNull(userAgent)) {
+            return null;
+        }
         ObjectNode device = objectMapper.createObjectNode();
         device.put("macAddress", getStringValue(eventRow, MAC_ADDRESS_KEY));
-        device.put("deviceId", getStringValue(eventRow, REF1_KEY));
+        final String deviceId = UserAgentUtils.generateDeviceFingerprint(getStringValue(eventRow, ACTOR_KEY), getStringValue(eventRow, REF1_KEY));
+        device.put("deviceId", deviceId);
         UserAgentUtils.populateDeviceInfo(device, getStringValue(eventRow, REF1_KEY));
         return device;
     }
 
-    private String getStringValue(Map<String, Object> eventRow, String key) {
+
+    private String getStringValue(final Map<String, Object> eventRow, final String key) {
         Object value = eventRow.get(key);
         return value != null ? value.toString() : null;
     }
 
-    private String getCanalValue(Map<String, Object> eventRow) {
+    private String getCanalValue(final Map<String, Object> eventRow) {
         String plateforme = getStringValue(eventRow, PLATEFORME_KEY);
         return (plateforme != null && plateforme.equalsIgnoreCase("web")) ? "WEB" : "MOBILE";
     }
 
-    private static void assertParametersNotNull(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+    private static void assertParametersNotNull(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         if (eventRow == null || classification == null || objectMapper == null) {
             throw new IllegalArgumentException("Invalid input parameters for event mapping");
+        }
+    }
+
+    public static String mapVirementVersBeneficiaireMultiDevise(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+
+            event.set("device", null); // No device information for remise ordre
+            mapVirementSharedAttributes(event);
+            // Additional VirementVersBeneficiaireMultiDevise specific fields
+
+            // ....
+
+            return objectMapper.writeValueAsString(event);
+
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for VirementVersBeneficiaireMultiDevise event: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static String mapVirementPermanentMultiDevise(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+
+            event.set("device", null); // No device information for remise ordre
+            mapVirementSharedAttributes(event);
+            // Additional VirementPermanentMultiDevise specific fields
+
+            // ....
+
+            return objectMapper.writeValueAsString(event);
+
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for VirementPermanentMultiDevise event: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static String mapChangementInfo(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
+
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+
+            event.set("device", null); // No device information for remise ordre
+
+            // Additional ChangementInfo event specific fields
+
+            // ....
+
+            return objectMapper.writeValueAsString(event);
+
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for ChangementInfo event: {}", e.getMessage());
+            return null;
+        }
+
+    }
+
+    public static String mapBeneficiaryManagementEvent(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+
+            event.set("device", null); // No device information for remise ordre
+            final String action;
+            final String eventFromAuditDB = getStringValue(eventRow, EVENTNAME_KEY);
+            if ("SIGNE_ADD_BENEFICIAIRE_V3.5".equals(eventFromAuditDB)) {
+                action = "ADD";
+            } else if ("UPDATE_BENEFICIARY".equals(eventFromAuditDB)) {
+                action = "REMOVE";
+            } else {
+                action = "NON_APPLICABLE";
+            }
+            // Additional BeneficiaryManagement event specific fields
+            event.put("action", action);
+            event.set("beneficiaryInfo", null);
+            return objectMapper.writeValueAsString(event);
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for BeneficiaryManagement event: {}", e.getMessage());
+            return null;
         }
     }
 }

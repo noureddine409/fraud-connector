@@ -15,6 +15,10 @@ public class CoreConstant {
         public static final String VIREMENT_COMPTE_A_COMPTE_PERMANENT = "virCACPerm";
         public static final String VIREMENT_COMPTE_A_COMPTE_MULTI_DEVISE = "virCACMultiDevise";
         public static final String REMISE_ORDRE = "remise-ordre";
+        public static final String VIREMENT_VERS_BENEFICIARE_MULTI_DEVISE = "virVersBenefMultiDevise";
+        public static final String VIREMENT_PERMANENT_MULTI_DEVISE = "virPermMultiDevise";
+        public static final String CHANGE_INFO = "changeInfo";
+        public static final String BENEFICIARY_MANAGEMENT = "beneficiaryManagement";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,6 +27,8 @@ public class CoreConstant {
         public static final String TIMESTAMP_KEY = "datecreated";
         public static final String MOTIF_KEY = "motif";
         public static final String ACTIVITY_TIME_KEY = "activitytime";
+        public static final String EVENTNAME_KEY = "eventname";
+        public static final String URI_KEY = "uri";
         public static final String ACTOR_KEY = "actor";
         public static final String IP_ADDRESS_KEY = "ipaddress";
         public static final String IP_ADDRESS_2_KEY = "ipaddress2";
