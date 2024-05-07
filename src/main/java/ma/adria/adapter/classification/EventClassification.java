@@ -4,9 +4,12 @@ package ma.adria.adapter.classification;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ma.adria.adapter.common.CoreConstant.Topics;
-import ma.adria.adapter.mapper.EventMappingFunctions;
 import ma.adria.adapter.mapper.EventMapper;
+import ma.adria.adapter.mapper.EventMappingFunctions;
 
+/**
+ * Enum representing different classifications of events with associated mapping functions and topic IDs.
+ */
 @Getter
 @AllArgsConstructor
 public enum EventClassification {
@@ -20,7 +23,7 @@ public enum EventClassification {
     REMISE_ORDRE(EventMappingFunctions::mapRemiseOrdre, Topics.REMISE_ORDRE),
     NON_APPLICABLE(null, null);
 
-    private final EventMapper mapProcessingFunction;
-    private final String topicId;
+    private final EventMapper mapProcessingFunction; // Function to map event data to a string representation
+    private final String topicId; // Identifier of the associated Kafka topic
 
 }

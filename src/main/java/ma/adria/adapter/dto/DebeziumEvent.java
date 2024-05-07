@@ -13,6 +13,9 @@ import ma.adria.adapter.deserializer.OperationTypeDeserializer;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+/**
+ * Represents a Debezium event DTO containing change data capture (CDC) information.
+ */
 @Data
 public class DebeziumEvent {
 

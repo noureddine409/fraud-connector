@@ -9,10 +9,10 @@ import io.debezium.engine.format.Json;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
-import ma.adria.adapter.dto.DebeziumEvent;
-import ma.adria.adapter.producer.KafkaProducer;
 import ma.adria.adapter.classification.EventClassification;
 import ma.adria.adapter.classification.EventClassifier;
+import ma.adria.adapter.dto.DebeziumEvent;
+import ma.adria.adapter.producer.KafkaProducer;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -22,6 +22,10 @@ import java.util.concurrent.Executors;
 
 import static ma.adria.adapter.dto.DebeziumEvent.OperationType.CREATE;
 
+/**
+ * Listener component responsible for capturing Change Data Capture (CDC) events from a Debezium engine
+ * and processing them accordingly.
+ */
 @Component
 @Slf4j
 public class CDCListener {
@@ -45,6 +49,11 @@ public class CDCListener {
                 .build();
     }
 
+    /**
+     * Handles incoming ChangeEvent from the Debezium engine.
+     *
+     * @param event ChangeEvent containing the CDC event data.
+     */
     private void handleEvent(ChangeEvent<String, String> event) {
         log.info("received change event: {}", event);
         try {

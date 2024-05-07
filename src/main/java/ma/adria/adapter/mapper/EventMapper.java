@@ -5,7 +5,18 @@ import ma.adria.adapter.classification.EventClassification;
 
 import java.util.Map;
 
+/**
+ * Functional interface for mapping event data to a JSON string.
+ */
 @FunctionalInterface
 public interface EventMapper {
+    /**
+     * Maps event data to a JSON string based on the provided classification.
+     *
+     * @param row            Event data map.
+     * @param classification Event classification.
+     * @param objectMapper   ObjectMapper instance to serialize the event data.
+     * @return JSON string representing the mapped event.
+     */
     String map(Map<String, Object> row, EventClassification classification, ObjectMapper objectMapper);
 }

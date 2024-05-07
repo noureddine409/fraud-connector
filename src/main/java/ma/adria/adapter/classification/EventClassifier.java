@@ -7,7 +7,9 @@ import java.util.Map;
 
 import static ma.adria.adapter.classification.EventClassification.*;
 
-
+/**
+ * Component responsible for classifying events based on predefined rules.
+ */
 @Component
 public class EventClassifier {
     private final Map<String, EventClassification> eventNameToClassificationMap = new HashMap<>();

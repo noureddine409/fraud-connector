@@ -5,6 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+
+/**
+ * Component responsible for sending messages to Kafka topics.
+ */
 @Component
 @Slf4j
 public class KafkaProducer {
@@ -19,11 +23,6 @@ public class KafkaProducer {
     public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
         this.kafkaTemplate.setDefaultTopic(defaultTopicName);
-    }
-
-    public void sendEvent(String message) {
-        kafkaTemplate.send(defaultTopicName, message);
-        log.info("Message sent to default topic {}", defaultTopicName);
     }
 
     public void sendEvent(String message, String topicId) {

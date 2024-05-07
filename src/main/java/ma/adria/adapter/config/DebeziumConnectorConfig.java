@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 
+/**
+ * Configuration class for setting up the Debezium connector.
+ */
 @Configuration
 public class DebeziumConnectorConfig {
 
