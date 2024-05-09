@@ -19,6 +19,7 @@ public class CoreConstant {
         public static final String VIREMENT_PERMANENT_MULTI_DEVISE = "virPermMultiDevise";
         public static final String CHANGE_INFO = "changeInfo";
         public static final String BENEFICIARY_MANAGEMENT = "beneficiaryManagement";
+        public static final String DEMANDE_CHEQUIER = "demandeCheq";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)

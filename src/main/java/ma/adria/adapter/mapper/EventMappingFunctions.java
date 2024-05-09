@@ -341,5 +341,30 @@ public class EventMappingFunctions {
             return null;
         }
     }
+
+    public static String mapDemandeChequierEvent(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
+        assertParametersNotNull(eventRow, classification, objectMapper);
+        try {
+            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+
+            event.set("device", null); // No device information for remise ordre
+
+            // Additional demande chéquier specific fields
+            event.set("reference", null);
+            event.set("account", null);
+            event.set("nombreChequier", null);
+            event.set("typeChequier", null);
+            event.set("devise", null);
+            event.set("dateEnvoie", null);
+            event.set("status", null);
+
+
+            return objectMapper.writeValueAsString(event);
+
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON for demande chéquier event: {}", e.getMessage());
+            return null;
+        }
+    }
 }
 
