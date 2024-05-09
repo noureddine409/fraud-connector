@@ -25,6 +25,7 @@ public enum EventClassification {
     REMISE_ORDRE(EventMappingFunctions::mapRemiseOrdre, Topics.REMISE_ORDRE),
     CHANGEMENT_INFO(EventMappingFunctions::mapChangementInfo, Topics.CHANGE_INFO),
     BENEFICIARY_MANAGEMENT(EventMappingFunctions::mapBeneficiaryManagementEvent, Topics.BENEFICIARY_MANAGEMENT),
+    DEMANDE_CHEQUIER(EventMappingFunctions::mapDemandeChequierEvent, Topics.DEMANDE_CHEQUIER),
     NON_APPLICABLE(null, null);
 
 
