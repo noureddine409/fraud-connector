@@ -43,15 +43,11 @@ Configures Kafka connection details such as bootstrap servers and topic settings
 ```bash
   git clone https://noureddinelachgar@bitbucket.org/adria-fraud-detection/adapter.git
 ```
-2. run docker compose file
-```bash
-  docker compose up -d
-```
-3. Build the project:
+2. Build the project:
 ```bash
   mvn clean install
 ```
-4. Run the application:
+3. Run the application:
 ```bash
   mvn spring-boot:run
 ```
