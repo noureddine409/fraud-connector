@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ma.adria.adapter.classification.EventClassification;
+import ma.adria.adapter.utils.DateTimeUtils;
 import ma.adria.adapter.utils.UserAgentUtils;
 
 import java.util.Map;
@@ -201,11 +202,13 @@ public class EventMappingFunctions {
 
     private static ObjectNode createEventNode(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
         ObjectNode event = objectMapper.createObjectNode();
-        event.put("id", getStringValue(eventRow, ID_KEY));
-        event.put("timestamp", getStringValue(eventRow, TIMESTAMP_KEY));
+        final String timestamp = DateTimeUtils.parse(getStringValue(eventRow, TIMESTAMP_KEY));
+        final String activityTime = DateTimeUtils.parse(getStringValue(eventRow, ACTIVITY_TIME_KEY));
+        event.put("reference", getStringValue(eventRow, ID_KEY));
+        event.put("timestamp", timestamp);
         event.put("motif", getStringValue(eventRow, MOTIF_KEY));
         event.put("canal", getCanalValue(eventRow));
-        event.put("activityTime", getStringValue(eventRow, ACTIVITY_TIME_KEY));
+        event.put("activityTime", activityTime);
         event.put("username", getStringValue(eventRow, ACTOR_KEY));
         event.put("bankCode", getStringValue(eventRow, BANK_CODE_KEY));
         event.put("countryCode", getStringValue(eventRow, COUNTRY_CODE_KEY));
@@ -222,11 +225,18 @@ public class EventMappingFunctions {
     }
 
     private static ObjectNode createContratNode(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
+        String contratId = getStringValue(eventRow, CONTRAT_ID_KEY);
+
+        if (contratId == null || contratId.isEmpty()) {
+            return null;
+        }
+
         ObjectNode contrat = objectMapper.createObjectNode();
-        contrat.put("contratID", getStringValue(eventRow, CONTRAT_ID_KEY));
+        contrat.put("contratID", contratId);
 
         return contrat;
     }
+
 
     private static ObjectNode createDeviceNode(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
         final String userAgent = getStringValue(eventRow, REF1_KEY);
@@ -235,8 +245,8 @@ public class EventMappingFunctions {
         }
         ObjectNode device = objectMapper.createObjectNode();
         device.put("macAddress", getStringValue(eventRow, MAC_ADDRESS_KEY));
-        final String deviceId = UserAgentUtils.generateDeviceFingerprint(getStringValue(eventRow, ACTOR_KEY), getStringValue(eventRow, REF1_KEY));
-        device.put("deviceId", deviceId);
+        final String fingerprint = UserAgentUtils.generateDeviceFingerprint(getStringValue(eventRow, ACTOR_KEY), getStringValue(eventRow, REF1_KEY));
+        device.put("fingerprint", fingerprint);
         UserAgentUtils.populateDeviceInfo(device, getStringValue(eventRow, REF1_KEY));
         return device;
     }
