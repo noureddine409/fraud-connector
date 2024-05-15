@@ -44,7 +44,6 @@ public class CDCListener {
         // Create a new DebeziumEngine instance.
         this.debeziumEngine = DebeziumEngine.create(Json.class)
                 .using(postgresConnector.asProperties())
-                //This is where your CDC events will be passed to
                 .notifying(this::handleEvent)
                 .build();
     }
@@ -55,27 +54,26 @@ public class CDCListener {
      * @param event ChangeEvent containing the CDC event data.
      */
     private void handleEvent(ChangeEvent<String, String> event) {
-        log.info("received change event: {}", event);
+        log.debug("Received change event: {}", event);
         try {
-            final var debeziumEvent = objectMapper.readValue(event.value(), DebeziumEvent.class);
+            final DebeziumEvent debeziumEvent = objectMapper.readValue(event.value(), DebeziumEvent.class);
             if (CREATE.equals(debeziumEvent.getPayload().getOperationType())) {
                 final Map<String, Object> eventRow = debeziumEvent.getPayload().getAfter();
-                log.info("new inserted row {}", eventRow);
+                log.debug("New inserted row: {}", eventRow);
                 final EventClassification eventClassification = eventClassifier.classify(eventRow);
-                log.info("event classification {}", eventClassification);
+                log.debug("Event classification: {}", eventClassification);
                 if (EventClassification.NON_APPLICABLE.equals(eventClassification)) {
-                    log.info("ignoring non-applicable event classification {}", eventClassification);
+                    log.debug("Ignoring non-applicable event classification: {}", eventClassification);
                     return;
                 }
                 final String eventAsMessage = eventClassification.getMapProcessingFunction().map(eventRow, eventClassification, objectMapper);
-                log.info("event as message {}", eventAsMessage);
+                log.debug("Event as message: {}", eventAsMessage);
                 kafkaProducer.sendEvent(eventAsMessage, eventClassification.getTopicId());
             }
         } catch (JsonProcessingException e) {
-            log.error("failed to deserialize change event", e);
+            log.error("Failed to deserialize change event", e);
         }
     }
-
 
     @PostConstruct
     private void start() {
@@ -84,12 +82,14 @@ public class CDCListener {
     }
 
     @PreDestroy
-    private void stop() throws IOException {
+    private void stop() {
         log.info("Stopping CDC listener");
         if (this.debeziumEngine != null) {
-            this.debeziumEngine.close();
+            try {
+                this.debeziumEngine.close();
+            } catch (IOException e) {
+                log.error("Error occurred while stopping CDC listener", e);
+            }
         }
     }
-
-
 }

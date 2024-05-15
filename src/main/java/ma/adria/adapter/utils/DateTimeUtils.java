@@ -4,15 +4,14 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import static ma.adria.adapter.common.CoreConstant.DateTimeFormats.INPUT_FORMATTER;
+import static ma.adria.adapter.common.CoreConstant.DateTimeFormats.OUTPUT_FORMATTER;
 
 @UtilityClass
 @Slf4j
 public class DateTimeUtils {
-
-    private static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss,SSSSSSSSS");
-    private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     public static String parse(String dateTimeString) {
         if (dateTimeString == null || dateTimeString.trim().isEmpty()) {

@@ -3,8 +3,17 @@ package ma.adria.adapter.common;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.time.format.DateTimeFormatter;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CoreConstant {
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class DateTimeFormats {
+        public static final DateTimeFormatter INPUT_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss,SSSSSSSSS");
+        public static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    }
+
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Topics {
         public static final String AUTHENTICATION = "auth";
