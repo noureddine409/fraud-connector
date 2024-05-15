@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ma.adria.adapter.classification.EventClassification;
+import ma.adria.adapter.utils.DateTimeUtils;
 import ma.adria.adapter.utils.UserAgentUtils;
 
 import java.util.Map;
@@ -26,7 +27,9 @@ public class EventMappingFunctions {
             ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
             ObjectNode device = createDeviceNode(eventRow, objectMapper);
             event.set("device", device);
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped authentication event to JSON successfully: {}", json);
+            return json;
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for authentication event: {}", e.getMessage());
             return null;
@@ -41,8 +44,9 @@ public class EventMappingFunctions {
 
             // Additional virement Compte a compte event specific fields
             mapVirementSharedAttributes(event);
-
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped Virement Compte a compte event to JSON successfully: {}", json);
+            return json;
 
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for Virement Compte a compte event: {}", e.getMessage());
@@ -61,7 +65,10 @@ public class EventMappingFunctions {
             // Additional virement vers beneficiaire specific fields
             mapVirementSharedAttributes(event);
 
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped virement vers beneficiaire event to JSON successfully: {}", json);
+
+            return json;
 
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for Virement vers beneficiare event: {}", e.getMessage());
@@ -92,8 +99,9 @@ public class EventMappingFunctions {
 
             // ....
 
-            return objectMapper.writeValueAsString(event);
-
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped virement permanent  event to JSON successfully: {}", json);
+            return json;
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for Virement permanent event: {}", e.getMessage());
             return null;
@@ -115,7 +123,9 @@ public class EventMappingFunctions {
 
             // ....
 
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped virement multiple event to JSON successfully: {}", json);
+            return json;
 
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for Virement multiple event: {}", e.getMessage());
@@ -131,11 +141,13 @@ public class EventMappingFunctions {
             event.set("device", null); // No device information for remise ordre
             mapVirementSharedAttributes(event);
 
-            // Additional remise ordre specific fields
+            // Additional VirementCompteAComptePermanent specific fields
 
             // ....
 
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped Virement Compte a compte permanent  event to JSON successfully: {}", json);
+            return json;
 
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for Virement Compte a compte permanent event: {}", e.getMessage());
@@ -155,7 +167,10 @@ public class EventMappingFunctions {
 
             // ....
 
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped virement compte a compte multi devise event to JSON successfully: {}", json);
+
+            return json;
 
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for Virement Compte a compte multi devise event: {}", e.getMessage());
@@ -181,7 +196,9 @@ public class EventMappingFunctions {
             event.set("executionDate", null);
             event.set("status", null);
 
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped remise ordre event to JSON successfully: {}", json);
+            return json;
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for Remise Ordre event: {}", e.getMessage());
             return null;
@@ -201,11 +218,13 @@ public class EventMappingFunctions {
 
     private static ObjectNode createEventNode(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
         ObjectNode event = objectMapper.createObjectNode();
-        event.put("id", getStringValue(eventRow, ID_KEY));
-        event.put("timestamp", getStringValue(eventRow, TIMESTAMP_KEY));
+        final String timestamp = DateTimeUtils.parse(getStringValue(eventRow, TIMESTAMP_KEY));
+        final String activityTime = DateTimeUtils.parse(getStringValue(eventRow, ACTIVITY_TIME_KEY));
+        event.put("reference", getStringValue(eventRow, ID_KEY));
+        event.put("timestamp", timestamp);
         event.put("motif", getStringValue(eventRow, MOTIF_KEY));
         event.put("canal", getCanalValue(eventRow));
-        event.put("activityTime", getStringValue(eventRow, ACTIVITY_TIME_KEY));
+        event.put("activityTime", activityTime);
         event.put("username", getStringValue(eventRow, ACTOR_KEY));
         event.put("bankCode", getStringValue(eventRow, BANK_CODE_KEY));
         event.put("countryCode", getStringValue(eventRow, COUNTRY_CODE_KEY));
@@ -222,11 +241,18 @@ public class EventMappingFunctions {
     }
 
     private static ObjectNode createContratNode(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
+        String contratId = getStringValue(eventRow, CONTRAT_ID_KEY);
+
+        if (contratId == null || contratId.isEmpty()) {
+            return null;
+        }
+
         ObjectNode contrat = objectMapper.createObjectNode();
-        contrat.put("contratID", getStringValue(eventRow, CONTRAT_ID_KEY));
+        contrat.put("contratID", contratId);
 
         return contrat;
     }
+
 
     private static ObjectNode createDeviceNode(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
         final String userAgent = getStringValue(eventRow, REF1_KEY);
@@ -235,8 +261,8 @@ public class EventMappingFunctions {
         }
         ObjectNode device = objectMapper.createObjectNode();
         device.put("macAddress", getStringValue(eventRow, MAC_ADDRESS_KEY));
-        final String deviceId = UserAgentUtils.generateDeviceFingerprint(getStringValue(eventRow, ACTOR_KEY), getStringValue(eventRow, REF1_KEY));
-        device.put("deviceId", deviceId);
+        final String fingerprint = UserAgentUtils.generateDeviceFingerprint(getStringValue(eventRow, ACTOR_KEY), getStringValue(eventRow, REF1_KEY));
+        device.put("fingerprint", fingerprint);
         UserAgentUtils.populateDeviceInfo(device, getStringValue(eventRow, REF1_KEY));
         return device;
     }
@@ -269,7 +295,10 @@ public class EventMappingFunctions {
 
             // ....
 
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped VirementVersBeneficiaireMultiDevise event to JSON successfully: {}", json);
+
+            return json;
 
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for VirementVersBeneficiaireMultiDevise event: {}", e.getMessage());
@@ -287,8 +316,10 @@ public class EventMappingFunctions {
             // Additional VirementPermanentMultiDevise specific fields
 
             // ....
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped VirementPermanentMultiDevise event to JSON successfully: {}", json);
 
-            return objectMapper.writeValueAsString(event);
+            return json;
 
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for VirementPermanentMultiDevise event: {}", e.getMessage());
@@ -308,7 +339,10 @@ public class EventMappingFunctions {
 
             // ....
 
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped Changement info event to JSON successfully: {}", json);
+
+            return json;
 
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for ChangementInfo event: {}", e.getMessage());
@@ -335,7 +369,10 @@ public class EventMappingFunctions {
             // Additional BeneficiaryManagement event specific fields
             event.put("action", action);
             event.set("beneficiaryInfo", null);
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped BeneficiaryManagement event to JSON successfully: {}", json);
+
+            return json;
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for BeneficiaryManagement event: {}", e.getMessage());
             return null;
@@ -359,7 +396,10 @@ public class EventMappingFunctions {
             event.set("status", null);
 
 
-            return objectMapper.writeValueAsString(event);
+            String json = objectMapper.writeValueAsString(event);
+            log.info("Mapped demande chéquier event to JSON successfully: {}", json);
+
+            return json;
 
         } catch (JsonProcessingException e) {
             log.error("Error processing JSON for demande chéquier event: {}", e.getMessage());
