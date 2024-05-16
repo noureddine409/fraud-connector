@@ -68,7 +68,7 @@ public class CDCListener {
                 }
                 final String eventAsMessage = eventClassification.getMapProcessingFunction().map(eventRow, eventClassification, objectMapper);
                 log.debug("Event as message: {}", eventAsMessage);
-                kafkaProducer.sendEvent(eventAsMessage, eventClassification.getTopicId());
+                kafkaProducer.sendEvent(eventAsMessage);
             }
         } catch (JsonProcessingException e) {
             log.error("Failed to deserialize change event", e);
