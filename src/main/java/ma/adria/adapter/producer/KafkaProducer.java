@@ -20,18 +20,15 @@ public class KafkaProducer {
     @Value("${kafka.event.topic}")
     private String defaultTopicName;
 
-    @Value("${kafka.event.topic-prefix}")
-    private String topicPrefix;
-
     public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
         this.kafkaTemplate.setDefaultTopic(defaultTopicName);
         log.info("KafkaProducer initialized with default topic: {}", defaultTopicName);
     }
 
-    public void sendEvent(String message, String topicId) {
-        final String topicName = topicPrefix + topicId;
-        log.debug("Preparing to send message to topic: {} with topicPrefix: {}", topicName, topicPrefix);
+    public void sendEvent(String message) {
+        final String topicName = defaultTopicName;
+        log.debug("Preparing to send message to topic: {}", topicName);
 
         CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topicName, message);
         log.info("Message sent to topic {}: {}", topicName, message);

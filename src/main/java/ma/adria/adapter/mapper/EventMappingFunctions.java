@@ -24,7 +24,7 @@ public class EventMappingFunctions {
     public static String mapAuthentication(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
             ObjectNode device = createDeviceNode(eventRow, objectMapper);
             event.set("device", device);
             String json = objectMapper.writeValueAsString(event);
@@ -39,7 +39,7 @@ public class EventMappingFunctions {
     public static String mapVirementCompteACompte(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
             event.set("device", null); // No device information
 
             // Additional virement Compte a compte event specific fields
@@ -58,7 +58,7 @@ public class EventMappingFunctions {
     public static String mapVirementVersBeneficiaire(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
 
@@ -90,7 +90,7 @@ public class EventMappingFunctions {
     public static String mapVirementPermanent(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
             mapVirementSharedAttributes(event);
@@ -111,7 +111,7 @@ public class EventMappingFunctions {
     public static String mapVirementMultiple(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
 
@@ -136,7 +136,7 @@ public class EventMappingFunctions {
     public static String mapVirementCompteAComptePermanent(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
             mapVirementSharedAttributes(event);
@@ -158,7 +158,7 @@ public class EventMappingFunctions {
     public static String mapVirementCompteACompteMultiDevise(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
             mapVirementSharedAttributes(event);
@@ -182,7 +182,7 @@ public class EventMappingFunctions {
         assertParametersNotNull(eventRow, classification, objectMapper);
 
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
 
@@ -206,11 +206,11 @@ public class EventMappingFunctions {
     }
 
 
-    private static ObjectNode mapSharedAttributes(final Map<String, Object> eventRow, final ObjectMapper objectMapper) {
+    private static ObjectNode mapSharedAttributes(final Map<String, Object> eventRow, EventClassification classification, final ObjectMapper objectMapper) {
         ObjectNode event = createEventNode(eventRow, objectMapper);
+        event.put("@eventType", classification.getEventName());
         ObjectNode location = createLocationNode(eventRow, objectMapper);
         event.set("location", location);
-
         ObjectNode contrat = createContratNode(eventRow, objectMapper);
         event.set("contrat", contrat);
         return event;
@@ -287,7 +287,7 @@ public class EventMappingFunctions {
     public static String mapVirementVersBeneficiaireMultiDevise(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
             mapVirementSharedAttributes(event);
@@ -309,7 +309,7 @@ public class EventMappingFunctions {
     public static String mapVirementPermanentMultiDevise(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
             mapVirementSharedAttributes(event);
@@ -331,7 +331,7 @@ public class EventMappingFunctions {
 
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
 
@@ -354,7 +354,7 @@ public class EventMappingFunctions {
     public static String mapBeneficiaryManagementEvent(final Map<String, Object> eventRow, final EventClassification classification, final ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
             final String action;
@@ -382,7 +382,7 @@ public class EventMappingFunctions {
     public static String mapDemandeChequierEvent(Map<String, Object> eventRow, EventClassification classification, ObjectMapper objectMapper) {
         assertParametersNotNull(eventRow, classification, objectMapper);
         try {
-            ObjectNode event = mapSharedAttributes(eventRow, objectMapper);
+            ObjectNode event = mapSharedAttributes(eventRow, classification, objectMapper);
 
             event.set("device", null); // No device information for remise ordre
 

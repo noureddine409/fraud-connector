@@ -15,20 +15,20 @@ public class CoreConstant {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Topics {
-        public static final String AUTHENTICATION = "auth";
-        public static final String VIREMENT_COMPTE_A_COMPTE = "virCAC";
-        public static final String VIREMENT_VERS_BENEFICIARE = "virVersBenef";
-        public static final String VIREMENT_PERMANENT = "virPerm";
-        public static final String VIREMENT_MULTIPLE = "virMult";
-        public static final String VIREMENT_COMPTE_A_COMPTE_PERMANENT = "virCACPerm";
-        public static final String VIREMENT_COMPTE_A_COMPTE_MULTI_DEVISE = "virCACMultiDevise";
-        public static final String REMISE_ORDRE = "remise-ordre";
-        public static final String VIREMENT_VERS_BENEFICIARE_MULTI_DEVISE = "virVersBenefMultiDevise";
-        public static final String VIREMENT_PERMANENT_MULTI_DEVISE = "virPermMultiDevise";
-        public static final String CHANGE_INFO = "changeInfo";
-        public static final String BENEFICIARY_MANAGEMENT = "beneficiaryManagement";
-        public static final String DEMANDE_CHEQUIER = "demandeCheq";
+    public static class EventNames {
+        public static final String AUTHENTICATION = "AUTHENTICATION";
+        public static final String VIREMENT_COMPTE_A_COMPTE = "VIREMENT_COMPTE_A_COMPTE";
+        public static final String VIREMENT_VERS_BENEFICIARE = "VIREMENT_VERS_BENEFICIARE";
+        public static final String VIREMENT_PERMANENT = "VIREMENT_PERMANENT";
+        public static final String VIREMENT_MULTIPLE = "VIREMENT_MULTIPLE";
+        public static final String VIREMENT_COMPTE_A_COMPTE_PERMANENT = "VIREMENT_COMPTE_A_COMPTE_PERMANENT";
+        public static final String VIREMENT_COMPTE_A_COMPTE_MULTI_DEVISE = "VIREMENT_COMPTE_A_COMPTE_MULTI_DEVISE";
+        public static final String REMISE_ORDRE = "REMISE_ORDRE";
+        public static final String VIREMENT_VERS_BENEFICIARE_MULTI_DEVISE = "VIREMENT_VERS_BENEFICIARE_MULTI_DEVISE";
+        public static final String VIREMENT_PERMANENT_MULTI_DEVISE = "VIREMENT_PERMANENT_MULTI_DEVISE";
+        public static final String CHANGE_INFO = "CHANGE_INFO";
+        public static final String BENEFICIARY_MANAGEMENT = "BENEFICIARY_MANAGEMENT";
+        public static final String DEMANDE_CHEQUIER = "DEMANDE_CHEQUIER";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
