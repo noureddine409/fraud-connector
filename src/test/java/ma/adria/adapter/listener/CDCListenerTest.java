@@ -7,8 +7,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.awaitility.Durations;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -25,7 +23,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -57,40 +54,28 @@ class CDCListenerTest {
         registry.add("debezium.offset.backing.bootstrap.servers", kafkaContainer::getBootstrapServers);
     }
 
-    @BeforeAll
-    public static void setUp() {
-        postgresContainer.start();
-        kafkaContainer.start();
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        kafkaContainer.stop();
-        postgresContainer.stop();
-    }
-
     @Test
     void testListenerReceivesEvents() {
         log.info("Starting testListenerReceivesEvents...");
         // Insert test event into PostgreSQL using JDBC connection
         try (Connection connection = getConnection(postgresContainer); Statement statement = connection.createStatement()) {
-            String insertSql = "INSERT INTO public.event_logs (id, actor, classname, codebanqueassocie, " + "codepaysassocie, datecreated, eventname, ipaddress, plateforme, motif, activitytime) " + "VALUES ('1000004029738', 'pzh2m5sc', 'ma.adria.bank.controller.AuthentificationController', " + "'BF161', 'BF', '08/09/21 15:13:38,658000000', 'ConnexionOK', '172.16.53.129', 'Web', 'CONNEXION OK', " + "'08/09/21 15:13:38,658000000')";
+            String insertSql = "INSERT INTO public.event_logs (id, actor, classname, codebanqueassocie, "
+                    + "codepaysassocie, datecreated, eventname, ipaddress, plateforme, motif, activitytime) "
+                    + "VALUES ('1000004029738', 'pzh2m5sc', 'ma.adria.bank.controller.AuthentificationController', "
+                    + "'BF161', 'BF', '08/09/21 15:13:38,658000000', 'ConnexionOK', '172.16.53.129', 'Web', 'CONNEXION OK', "
+                    + "'08/09/21 15:13:38,658000000')";
             statement.executeUpdate(insertSql);
             log.info("Test event inserted into PostgreSQL successfully.");
         } catch (SQLException e) {
             log.error("Failed to insert test event into PostgreSQL:", e);
+            return; // Exit the test if the insert fails
         }
+
 
         await().pollInterval(Durations.ONE_HUNDRED_MILLISECONDS).atMost(Durations.FIVE_SECONDS).untilAsserted(this::verifyKafkaMessage);
 
-        log.info("testListenerReceivesEvents completed.");
-    }
 
-    private static Connection getConnection(PostgreSQLContainer<?> container) throws SQLException {
-        String jdbcUrl = container.getJdbcUrl();
-        String username = container.getUsername();
-        String password = container.getPassword();
-        return DriverManager.getConnection(jdbcUrl, username, password);
+        log.info("testListenerReceivesEvents completed.");
     }
 
     private void verifyKafkaMessage() {
@@ -104,14 +89,23 @@ class CDCListenerTest {
             consumer.subscribe(Collections.singletonList("t.events"));
 
             // Poll for new records
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(10));
+            ConsumerRecords<String, String> records = consumer.poll(Durations.FIVE_SECONDS);
             assertEquals(1, records.count(), "Expected one record");
             log.info("Received {} Kafka records.", records.count());
         } catch (Exception e) {
             log.error("Failed to verify Kafka message:", e);
         }
+
         log.info("verifyKafkaMessage completed.");
     }
+
+    private static Connection getConnection(PostgreSQLContainer<?> container) throws SQLException {
+        String jdbcUrl = container.getJdbcUrl();
+        String username = container.getUsername();
+        String password = container.getPassword();
+        return DriverManager.getConnection(jdbcUrl, username, password);
+    }
+
 
     private static @NotNull Properties prepareConsumerProperties() {
         Properties props = new Properties();
