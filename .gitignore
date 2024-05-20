@@ -33,3 +33,4 @@ build/
 .vscode/
 
 offsets_.dat
+offsets_test_.dat

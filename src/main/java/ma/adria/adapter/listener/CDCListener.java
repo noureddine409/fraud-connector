@@ -21,6 +21,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import static ma.adria.adapter.dto.DebeziumEvent.OperationType.CREATE;
+import static ma.adria.adapter.dto.DebeziumEvent.OperationType.READ;
 
 /**
  * Listener component responsible for capturing Change Data Capture (CDC) events from a Debezium engine
@@ -42,10 +43,7 @@ public class CDCListener {
         this.executor = Executors.newSingleThreadExecutor();
 
         // Create a new DebeziumEngine instance.
-        this.debeziumEngine = DebeziumEngine.create(Json.class)
-                .using(postgresConnector.asProperties())
-                .notifying(this::handleEvent)
-                .build();
+        this.debeziumEngine = DebeziumEngine.create(Json.class).using(postgresConnector.asProperties()).notifying(this::handleEvent).build();
     }
 
     /**
@@ -57,7 +55,7 @@ public class CDCListener {
         log.debug("Received change event: {}", event);
         try {
             final DebeziumEvent debeziumEvent = objectMapper.readValue(event.value(), DebeziumEvent.class);
-            if (CREATE.equals(debeziumEvent.getPayload().getOperationType())) {
+            if (CREATE.equals(debeziumEvent.getPayload().getOperationType()) || READ.equals(debeziumEvent.getPayload().getOperationType())) {
                 final Map<String, Object> eventRow = debeziumEvent.getPayload().getAfter();
                 log.debug("New inserted row: {}", eventRow);
                 final EventClassification eventClassification = eventClassifier.classify(eventRow);

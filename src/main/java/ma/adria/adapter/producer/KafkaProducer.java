@@ -28,7 +28,7 @@ public class KafkaProducer {
 
     public void sendEvent(String message) {
         final String topicName = defaultTopicName;
-        log.debug("Preparing to send message to topic: {}", topicName);
+        log.info("Preparing to send message to topic: {}", topicName);
 
         CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topicName, message);
         log.info("Message sent to topic {}: {}", topicName, message);
