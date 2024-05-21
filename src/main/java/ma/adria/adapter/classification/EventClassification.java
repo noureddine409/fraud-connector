@@ -8,7 +8,7 @@ import ma.adria.adapter.mapper.EventMapper;
 import ma.adria.adapter.mapper.EventMappingFunctions;
 
 /**
- * Enum representing different classifications of events with associated mapping functions and topic IDs.
+ * Enum representing different classifications of events with associated mapping functions and event Names.
  */
 @Getter
 @AllArgsConstructor
