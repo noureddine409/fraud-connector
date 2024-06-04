@@ -248,7 +248,7 @@ public class EventMappingFunctions {
         }
 
         ObjectNode contrat = objectMapper.createObjectNode();
-        contrat.put("contratID", contratId);
+        contrat.put("contratId", contratId);
 
         return contrat;
     }
