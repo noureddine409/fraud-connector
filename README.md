@@ -58,7 +58,7 @@ this diagram show how our system is deployed
 1. Clone the repository:
 
 ```bash
-  git clone https://noureddinelachgar@bitbucket.org/adria-fraud-detection/adapter.git
+  git clone https://github.com/noureddine409/fraud-connector.git
 ```
 
 2. Build the project:
